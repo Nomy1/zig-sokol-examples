@@ -1,6 +1,7 @@
 const std = @import("std");
 const sg = @import("sokol").gfx;
 const sapp = @import("sokol").app;
+const sgapp  = @import("sokol").app_gfx_glue;
 
 var pass_action: sg.PassAction = .{};
 
@@ -8,6 +9,7 @@ pub fn main() void {
     sapp.run(.{
         .init_cb = init,
         .cleanup_cb = cleanup,
+        .event_cb = input,
         .frame_cb = frame,
         .width = 800,
         .height = 600,
@@ -29,6 +31,13 @@ export fn init() void {
 
 export fn cleanup() void {
     sg.shutdown();
+}
+
+export fn input(ev: ?*const sapp.Event) void {
+    const event = ev.?;
+    if(event.type == .KEY_DOWN and event.key_code == .ESCAPE){
+        sapp.quit();
+    }
 }
 
 export fn frame() void {
