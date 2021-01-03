@@ -5,6 +5,7 @@ const zig = @import("std").zig;
 pub fn build(b: *bld.Builder) void {
     const sokol = buildSokol(b);
     buildExample(b, sokol, "window");
+    buildExample(b, sokol, "triangle");
 }
 
 // build one of the exes
