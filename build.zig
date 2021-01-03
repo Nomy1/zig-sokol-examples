@@ -10,7 +10,7 @@ pub fn build(b: *bld.Builder) void {
 
 // build one of the exes
 fn buildExample(b: *bld.Builder, sokol: *bld.LibExeObjStep, comptime name: []const u8) void {
-    const e = b.addExecutable(name, "src/" ++ name ++ ".zig");
+    const e = b.addExecutable(name, "src/examples/" ++ name ++ ".zig");
     e.linkLibrary(sokol);
     e.setBuildMode(b.standardReleaseOptions());
     e.addPackagePath("sokol", "src/deps/sokol/sokol.zig");

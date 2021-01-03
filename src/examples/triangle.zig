@@ -49,10 +49,10 @@ export fn init() void {
     // embed vertex and fragment shaders.
     const shader_desc: sg.ShaderDesc = .{
         .vs = .{
-            .source = @embedFile("simple-vert-shader.metal"),
+            .source = @embedFile("../shaders/simple-vert-shader.metal"),
         },
         .fs = .{
-            .source = @embedFile("simple-frag-shader.metal"),
+            .source = @embedFile("../shaders/simple-frag-shader.metal"),
         },
     };
 
