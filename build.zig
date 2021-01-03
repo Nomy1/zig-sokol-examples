@@ -7,6 +7,7 @@ pub fn build(b: *bld.Builder) void {
     buildExample(b, sokol, "window");
     buildExample(b, sokol, "triangle");
     buildExample(b, sokol, "quad");
+    buildExample(b, sokol, "wireframe");
 }
 
 // build one of the exes
