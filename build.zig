@@ -6,6 +6,7 @@ pub fn build(b: *bld.Builder) void {
     const sokol = buildSokol(b);
     buildExample(b, sokol, "window");
     buildExample(b, sokol, "triangle");
+    buildExample(b, sokol, "quad");
 }
 
 // build one of the exes
