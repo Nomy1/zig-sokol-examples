@@ -57,32 +57,21 @@ export fn init() void {
         .content = &indices,
     });
 
-
-
-    var uniform_desc = sg.ShaderUniformDesc {
-        .type = .FLOAT,
-    };
-
-    var uniform_block_desc = sg.ShaderUniformBlockDesc {
-        .size = @sizeOf(f32),
-    };
-    uniform_block_desc.uniforms[0] = uniform_desc;
-
-    var frag_stage_desc = sg.ShaderStageDesc {
-        .source = @embedFile("../shaders/simple-frag-shader.metal"),
-    };
-    frag_stage_desc.uniform_blocks[0] = uniform_block_desc;
-
     // embed vertex and fragment shaders.
-    var shader_desc: sg.ShaderDesc = .{
+    var shader_desc = sg.ShaderDesc {
         .vs = .{
             .source = @embedFile("../shaders/simple-vert-shader.metal"),
         },
-        .fs = frag_stage_desc,
+        .fs = .{
+            .source = @embedFile("../shaders/simple-frag-shader.metal"),
+        },
     };
 
-
-
+    // describe the uniform block for the pipeline.
+    // a float in the metal fragment shader seems to be f32.
+    shader_desc.fs.uniform_blocks[0] = sg.ShaderUniformBlockDesc {
+        .size = @sizeOf(f32),
+    };
 
     // create pipeline to use our shader.
     var pipeline_desc: sg.PipelineDesc = .{
