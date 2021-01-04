@@ -16,7 +16,7 @@ pub fn main() void {
         .width = 800,
         .height = 600,
         .gl_force_gles2 = true,
-        .window_title = "Triangle example",
+        .window_title = "Quad example",
     });
 }
 
