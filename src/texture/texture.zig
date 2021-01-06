@@ -86,10 +86,11 @@ export fn init() void {
     // capture image properties
     var imgWidth:c_int = 0;
     var imgHeight:c_int = 0;
-    var bytesPerPixel:c_int = 4;
-    
+    var desiredBytesPerPixel:c_int = 4;
+    var actualBytesPerPixel:c_int = undefined;
+
     // load pixels.
-    const pixels = c.stbi_load("res/awesomeface.png", &imgWidth, &imgHeight, &bytesPerPixel, 0);
+    const pixels = c.stbi_load("res/awesomeface.png", &imgWidth, &imgHeight, &actualBytesPerPixel, desiredBytesPerPixel);
 
     var img_desc: sg.ImageDesc = .{};
     img_desc.type = ._2D;
@@ -101,7 +102,7 @@ export fn init() void {
     img_desc.min_filter = .LINEAR;
     img_desc.mag_filter = .LINEAR;
     img_desc.content.subimage[0][0].ptr = pixels;
-    img_desc.content.subimage[0][0].size = 512 * 512 * bytesPerPixel;
+    img_desc.content.subimage[0][0].size = 512 * 512 * actualBytesPerPixel;
 
     sg.initImage(bindings.fs_images[0], img_desc);
 
