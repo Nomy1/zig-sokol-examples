@@ -10,6 +10,7 @@ Currently only works with a Metal rendering backend, but with a little effort ot
 - ![Wireframe](src/wireframe)
 - ![Uniform](src/uniform)
 - ![Texture](src/texture)
+- ![Scale](src/scale)
 
 ## Helpful links
 

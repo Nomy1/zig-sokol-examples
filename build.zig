@@ -12,6 +12,7 @@ pub fn build(b: *bld.Builder) void {
     buildExample(b, sokol, "wireframe");
     buildExample(b, sokol, "uniform");
     buildExample(b, sokol, "texture");
+    buildExample(b, sokol, "scale");
 }
 
 // build sokol and stb_image
