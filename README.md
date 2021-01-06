@@ -4,15 +4,15 @@ Currently only works with a Metal rendering backend, but with a little effort ot
 
 ## Examples
 
-- Window
-- Triangle
-- Quad
-- Wireframe
-- Uniform
-- Texture
+- ![Window](src/window)
+- ![Triangle](src/triangle)
+- ![Quad](src/quad)
+- ![Wireframe](src/wireframe)
+- ![Uniform](src/uniform)
+- ![Texture](src/texture)
 
 ## Helpful links
 
-https://github.com/vlang/sokol/blob/master/sokol_gfx.h
-https://github.com/GeertArien/learnopengl-examples
-https://github.com/floooh/pacman.zig
+- ![sokol_gfx.h](https://github.com/vlang/sokol/blob/master/sokol_gfx.h)
+- ![GeertArien/learnopengl-examples](https://github.com/GeertArien/learnopengl-examples)
+- ![floooh/pacman.zig](https://github.com/floooh/pacman.zig)

@@ -9,3 +9,5 @@ Renders a wireframe to the screen. This is almost identicle to quad except that 
 ```
 .primitive_type = .LINES,
 ```
+
+![Wireframe output](../../webpage/wireframe.png)
