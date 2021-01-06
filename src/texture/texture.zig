@@ -83,25 +83,25 @@ export fn init() void {
     // shader as a float2 type.
     pipeline_desc.layout.attrs[1].format = .FLOAT2;
 
-    // load the image's pixels.
-    const pixels = bytes: {
-        var w:c_int = 512;
-        var h:c_int = 512;
-        var n:c_int = 4;
-        break :bytes c.stbi_load("res/awesomeface.png", &w, &h, &n, 0);
-    };
+    // capture image properties
+    var imgWidth:c_int = 0;
+    var imgHeight:c_int = 0;
+    var bytesPerPixel:c_int = 4;
+    
+    // load pixels.
+    const pixels = c.stbi_load("res/awesomeface.png", &imgWidth, &imgHeight, &bytesPerPixel, 0);
 
     var img_desc: sg.ImageDesc = .{};
     img_desc.type = ._2D;
-    img_desc.width = 512;
-    img_desc.height = 512;
+    img_desc.width = imgWidth;
+    img_desc.height = imgHeight;
     img_desc.pixel_format = .RGBA8;
     img_desc.wrap_u = .REPEAT;
     img_desc.wrap_v = .REPEAT;
     img_desc.min_filter = .LINEAR;
     img_desc.mag_filter = .LINEAR;
     img_desc.content.subimage[0][0].ptr = pixels;
-    img_desc.content.subimage[0][0].size = 512 * 512 * 4;
+    img_desc.content.subimage[0][0].size = 512 * 512 * bytesPerPixel;
 
     sg.initImage(bindings.fs_images[0], img_desc);
 
