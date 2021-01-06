@@ -15,7 +15,6 @@ pub fn main() void {
         .frame_cb = frame,
         .width = 800,
         .height = 600,
-        .gl_force_gles2 = true,
         .window_title = "Wireframe example",
     });
 }
@@ -61,10 +60,10 @@ export fn init() void {
     // embed vertex and fragment shaders.
     const shader_desc: sg.ShaderDesc = .{
         .vs = .{
-            .source = @embedFile("../shaders/simple-vert-shader.metal"),
+            .source = @embedFile("simple-vert-shader.metal"),
         },
         .fs = .{
-            .source = @embedFile("../shaders/simple-frag-shader.metal"),
+            .source = @embedFile("simple-frag-shader.metal"),
         },
     };
 

@@ -16,7 +16,7 @@ pub fn main() void {
         .width = 800,
         .height = 600,
         .gl_force_gles2 = true,
-        .window_title = "Triangle example",
+        .window_title = "Quad example",
     });
 }
 
@@ -30,14 +30,20 @@ export fn init() void {
     // ex: Metal, OpenGL, DirectX, etc
     std.debug.print("Gfx using: {}\n", .{sg.queryBackend()});
 
-    // triangle vertices (x,y,z)
+    // quad vertices (x,y,z)
     // (0,0) is middle of screen
     // (-1, -1) is bottom-left
     // (1, 1) is top-right
     const verts = [_]f32 {
-        -1, -1, 0.0, // bottom left
-        1, -1, 0.0,  // bottom right
-        0.0, 1, 0.0, // top middle
+        -0.75, -0.75, 0.0, // bottom left
+        -0.75, 0.75, 0.0,  // top left
+        0.75, 0.75, 0.0, // top right
+        0.75, -0.75, 0.0, // bottom right
+    };
+
+    const indices = [_]u16 {
+        0, 1, 3,
+        1, 2, 3,
     };
 
     // bind the vertices to the first vertex buffer.
@@ -45,20 +51,26 @@ export fn init() void {
         .size = @sizeOf(@TypeOf(verts)),
         .content = &verts,
     });
+    bindings.index_buffer = sg.makeBuffer(.{
+        .type = .INDEXBUFFER,   // need to define this buffer as index buffer.
+        .size = @sizeOf(@TypeOf(indices)),
+        .content = &indices,
+    });
 
     // embed vertex and fragment shaders.
     const shader_desc: sg.ShaderDesc = .{
         .vs = .{
-            .source = @embedFile("../shaders/simple-vert-shader.metal"),
+            .source = @embedFile("simple-vert-shader.metal"),
         },
         .fs = .{
-            .source = @embedFile("../shaders/simple-frag-shader.metal"),
+            .source = @embedFile("simple-frag-shader.metal"),
         },
     };
 
     // create pipeline to use our shader.
     var pipeline_desc: sg.PipelineDesc = .{
         .shader = sg.makeShader(shader_desc),
+        .index_type = .UINT16, // we need this now that we use indices.
         .primitive_type = .TRIANGLE_STRIP,
     };
     // set the attribute (position) that is sent to our shader
@@ -89,7 +101,17 @@ export fn frame() void {
     sg.beginDefaultPass(pass_action, sapp.width(), sapp.height());
     sg.applyPipeline(pip);
     sg.applyBindings(bindings);
-    sg.draw(0, 3, 1);
+
+    // From the documentation:
+    // In the case of no instancing: num_instances should be set to 1 and base_element/num_elements are
+    // amounts of vertices. 
+    
+    // In the case of instancing (meaning num_instances > 1), num elements is the
+    // number of vertices in one instance, while base_element remains unchanged. base_element is the index
+    // of the first vertex to begin drawing from.
+    
+    //sg_draw(int base_element, int num_elements, int num_instances)
+    sg.draw(0, 6, 1);
     sg.endPass();
     
     // commit (finalize) our instructions.

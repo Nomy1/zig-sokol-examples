@@ -15,8 +15,7 @@ pub fn main() void {
         .frame_cb = frame,
         .width = 800,
         .height = 600,
-        .gl_force_gles2 = true,
-        .window_title = "Quad example",
+        .window_title = "Uniform example",
     });
 }
 
@@ -58,13 +57,19 @@ export fn init() void {
     });
 
     // embed vertex and fragment shaders.
-    const shader_desc: sg.ShaderDesc = .{
+    var shader_desc: sg.ShaderDesc = .{
         .vs = .{
-            .source = @embedFile("../shaders/simple-vert-shader.metal"),
+            .source = @embedFile("simple-vert-shader.metal"),
         },
         .fs = .{
-            .source = @embedFile("../shaders/simple-frag-shader.metal"),
+            .source = @embedFile("simple-frag-shader.metal"),
         },
+    };
+
+    // describe the uniform block for the pipeline.
+    // a float in the metal fragment shader seems to be f32.
+    shader_desc.fs.uniform_blocks[0] = sg.ShaderUniformBlockDesc {
+        .size = @sizeOf(f32),
     };
 
     // create pipeline to use our shader.
@@ -101,6 +106,12 @@ export fn frame() void {
     sg.beginDefaultPass(pass_action, sapp.width(), sapp.height());
     sg.applyPipeline(pip);
     sg.applyBindings(bindings);
+
+    // pass address of uniform float variable to fragment shader
+    // to be used globally across all users of the shader program.
+    const color: f32 = 1.0;
+    sg.applyUniforms(sg.ShaderStage.FS, 0, &color, @sizeOf(f32));
+
     sg.draw(0, 6, 1);
     sg.endPass();
     

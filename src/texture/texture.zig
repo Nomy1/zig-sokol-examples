@@ -2,6 +2,10 @@ const std = @import("std");
 const sg = @import("sokol").gfx;
 const sapp = @import("sokol").app;
 const sgapp  = @import("sokol").app_gfx_glue;
+const Allocator = std.mem.Allocator;
+const c = @cImport({
+    @cInclude("stb_image.c");
+});
 
 var pip: sg.Pipeline = .{};
 var bindings: sg.Bindings = .{};
@@ -15,8 +19,7 @@ pub fn main() void {
         .frame_cb = frame,
         .width = 800,
         .height = 600,
-        .gl_force_gles2 = true,
-        .window_title = "Uniform example",
+        .window_title = "Texture example",
     });
 }
 
@@ -35,10 +38,11 @@ export fn init() void {
     // (-1, -1) is bottom-left
     // (1, 1) is top-right
     const verts = [_]f32 {
-        -0.75, -0.75, 0.0, // bottom left
-        -0.75, 0.75, 0.0,  // top left
-        0.75, 0.75, 0.0, // top right
-        0.75, -0.75, 0.0, // bottom right
+        // positions       // texture coords
+        -0.75, -0.75, 0.0,     1.0, 1.0,   
+        -0.75, 0.75, 0.0,      1.0, 0.0,
+        0.75, 0.75, 0.0,       0.0, 0.0,
+        0.75, -0.75, 0.0,      0.0, 1.0,
     };
 
     const indices = [_]u16 {
@@ -56,22 +60,13 @@ export fn init() void {
         .size = @sizeOf(@TypeOf(indices)),
         .content = &indices,
     });
+    bindings.fs_images[0] = sg.allocImage();
 
     // embed vertex and fragment shaders.
-    var shader_desc = sg.ShaderDesc {
-        .vs = .{
-            .source = @embedFile("../shaders/simple-vert-shader.metal"),
-        },
-        .fs = .{
-            .source = @embedFile("../shaders/simple-frag-shader.metal"),
-        },
-    };
-
-    // describe the uniform block for the pipeline.
-    // a float in the metal fragment shader seems to be f32.
-    shader_desc.fs.uniform_blocks[0] = sg.ShaderUniformBlockDesc {
-        .size = @sizeOf(f32),
-    };
+    var shader_desc: sg.ShaderDesc = .{};
+    shader_desc.vs.source = @embedFile("simple-vert-shader.metal");
+    shader_desc.fs.source = @embedFile("simple-frag-shader.metal");
+    shader_desc.fs.images[0].type = ._2D;
 
     // create pipeline to use our shader.
     var pipeline_desc: sg.PipelineDesc = .{
@@ -79,10 +74,41 @@ export fn init() void {
         .index_type = .UINT16, // we need this now that we use indices.
         .primitive_type = .TRIANGLE_STRIP,
     };
+
     // set the attribute (position) that is sent to our shader
     // as a float3 type.
     pipeline_desc.layout.attrs[0].format = .FLOAT3;
+    
+    // set attribute for texture UV position and send it to our
+    // shader as a float2 type.
+    pipeline_desc.layout.attrs[1].format = .FLOAT2;
+
+    // load the image's pixels.
+    const pixels = bytes: {
+        var w:c_int = 512;
+        var h:c_int = 512;
+        var n:c_int = 4;
+        break :bytes c.stbi_load("res/awesomeface.png", &w, &h, &n, 0);
+    };
+
+    var img_desc: sg.ImageDesc = .{};
+    img_desc.type = ._2D;
+    img_desc.width = 512;
+    img_desc.height = 512;
+    img_desc.pixel_format = .RGBA8;
+    img_desc.wrap_u = .REPEAT;
+    img_desc.wrap_v = .REPEAT;
+    img_desc.min_filter = .LINEAR;
+    img_desc.mag_filter = .LINEAR;
+    img_desc.content.subimage[0][0].ptr = pixels;
+    img_desc.content.subimage[0][0].size = 512 * 512 * 4;
+
+    sg.initImage(bindings.fs_images[0], img_desc);
+
     pip = sg.makePipeline(pipeline_desc);
+
+    // free after passing the data to the pipeline.
+    c.stbi_image_free(pixels);
 
     // set the clear pass action's color.
     pass_action.colors[0] = .{
@@ -107,12 +133,6 @@ export fn frame() void {
     sg.beginDefaultPass(pass_action, sapp.width(), sapp.height());
     sg.applyPipeline(pip);
     sg.applyBindings(bindings);
-
-    // pass address of uniform float variable to fragment shader
-    // to be used globally across all users of the shader program.
-    const color: f32 = 1.0;
-    sg.applyUniforms(sg.ShaderStage.FS, 0, &color, @sizeOf(f32));
-
     sg.draw(0, 6, 1);
     sg.endPass();
     

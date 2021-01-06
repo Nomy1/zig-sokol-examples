@@ -4,27 +4,31 @@ const zig = @import("std").zig;
 
 pub fn build(b: *bld.Builder) void {
     const sokol = buildSokol(b);
+
+    // setup a build macro for all examples.
     buildExample(b, sokol, "window");
     buildExample(b, sokol, "triangle");
     buildExample(b, sokol, "quad");
     buildExample(b, sokol, "wireframe");
     buildExample(b, sokol, "uniform");
+    buildExample(b, sokol, "texture");
 }
 
-// build one of the exes
-fn buildExample(b: *bld.Builder, sokol: *bld.LibExeObjStep, comptime name: []const u8) void {
-    const e = b.addExecutable(name, "src/examples/" ++ name ++ ".zig");
-    e.linkLibrary(sokol);
-    e.setBuildMode(b.standardReleaseOptions());
-    e.addPackagePath("sokol", "src/deps/sokol/sokol.zig");
-    e.install();
-    b.step(name, "Run " ++ name).dependOn(&e.run().step);
-}
-
-// build sokol into a static library
+// build sokol and stb_image
 fn buildSokol(b: *bld.Builder) *bld.LibExeObjStep {
     const lib = b.addStaticLibrary("sokol", null);
     lib.linkLibC();
+
+    // add the stb_image source.
+    //
+    // note:
+    // the contents of the source is actually just the .h header file.
+    // I renamed it to .c and add it with the STB_IMAGE_IMPLEMENTATION
+    // preprocessor to link what I need as according to the stb_image docs.
+    lib.addCSourceFile("src/deps/stb/stb_image.c", &[_][]const u8{
+        "-D STB_IMAGE_IMPLEMENTATION",
+    });
+
     lib.setBuildMode(b.standardReleaseOptions());
     if (lib.target.isDarwin()) {
         macosAddSdkDirs(b, lib) catch unreachable;
@@ -46,6 +50,17 @@ fn buildSokol(b: *bld.Builder) *bld.LibExeObjStep {
         }
     }
     return lib;
+}
+
+// build one of the exes
+fn buildExample(b: *bld.Builder, sokol: *bld.LibExeObjStep, comptime name: []const u8) void {
+    const e = b.addExecutable(name, "src/" ++ name ++ "/" ++ name ++ ".zig");
+    e.linkLibrary(sokol);
+    e.setBuildMode(b.standardReleaseOptions());
+    e.addPackagePath("sokol", "src/deps/sokol/sokol.zig");
+    e.addIncludeDir("src/deps/stb");
+    e.install();
+    b.step(name, "Run " ++ name).dependOn(&e.run().step);
 }
 
 // macOS helper function to add SDK search paths

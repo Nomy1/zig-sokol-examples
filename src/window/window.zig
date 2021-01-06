@@ -13,7 +13,6 @@ pub fn main() void {
         .frame_cb = frame,
         .width = 800,
         .height = 600,
-        .gl_force_gles2 = true,
         .window_title = "window example",
     });
 }
@@ -41,7 +40,10 @@ export fn input(ev: ?*const sapp.Event) void {
 }
 
 export fn frame() void {
+    // first pass.
     sg.beginDefaultPass(pass_action, sapp.width(), sapp.height());
     sg.endPass();
+
+    // commit (finalize) our instructions.
     sg.commit();
 }
