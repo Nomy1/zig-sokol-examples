@@ -2,6 +2,10 @@
 
 Currently only works with a Metal rendering backend, but with a little effort other backends can be supported.
 
+Remember to clone the submodules also when cloning!
+
+`git clone --recursive`
+
 ## Examples
 
 - ![Window](src/window)
