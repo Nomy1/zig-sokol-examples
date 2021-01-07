@@ -11,6 +11,7 @@ Currently only works with a Metal rendering backend, but with a little effort ot
 - ![Uniform](src/uniform)
 - ![Texture](src/texture)
 - ![Scale](src/scale)
+- ![Rotating Cube](src/rotating_cube)
 
 ## Helpful links
 

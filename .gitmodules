@@ -1,0 +1,3 @@
+[submodule "src/deps/zalgebra"]
+	path = src/deps/zalgebra
+	url = https://github.com/kooparse/zalgebra.git

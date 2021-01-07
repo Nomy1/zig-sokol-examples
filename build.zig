@@ -13,6 +13,7 @@ pub fn build(b: *bld.Builder) void {
     buildExample(b, sokol, "uniform");
     buildExample(b, sokol, "texture");
     buildExample(b, sokol, "scale");
+    buildExample(b, sokol, "rotating_cube");
 }
 
 // build sokol and stb_image
@@ -59,7 +60,9 @@ fn buildExample(b: *bld.Builder, sokol: *bld.LibExeObjStep, comptime name: []con
     e.linkLibrary(sokol);
     e.setBuildMode(b.standardReleaseOptions());
     e.addPackagePath("sokol", "src/deps/sokol/sokol.zig");
+    e.addPackagePath("zalgebra", "src/deps/zalgebra/src/main.zig");
     e.addIncludeDir("src/deps/stb");
+    e.addIncludeDir("src/deps/zalgebra/src");
     e.install();
     b.step(name, "Run " ++ name).dependOn(&e.run().step);
 }
