@@ -21,7 +21,7 @@ pub fn main() void {
         .frame_cb = frame,
         .width = 800,
         .height = 600,
-        .window_title = "Look At example",
+        .window_title = "Multiple Cubes example",
     });
 }
 
