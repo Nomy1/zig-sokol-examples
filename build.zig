@@ -15,6 +15,7 @@ pub fn build(b: *bld.Builder) void {
     buildExample(b, sokol, "scale");
     buildExample(b, sokol, "rotating_cube");
     buildExample(b, sokol, "multiple_cubes");
+    buildExample(b, sokol, "look_at");
 }
 
 // build sokol and stb_image

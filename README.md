@@ -17,6 +17,7 @@ Remember to clone the submodules also when cloning!
 - ![Scale](src/scale)
 - ![Rotating Cube](src/rotating_cube)
 - ![Multiple Cubes](src/multiple_cubes)
+- ![Look At](src/look_at)
 
 ## Helpful links
 
