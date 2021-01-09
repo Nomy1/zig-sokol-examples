@@ -16,6 +16,7 @@ Remember to clone the submodules also when cloning!
 - ![Texture](src/texture)
 - ![Scale](src/scale)
 - ![Rotating Cube](src/rotating_cube)
+- ![Multiple Cubes](src/multiple_cubes)
 
 ## Helpful links
 
